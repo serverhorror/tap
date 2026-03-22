@@ -66,6 +66,24 @@ Contract with app.js
     } catch (_) {}
   }
 
+  function startTickingSound() {
+    try {
+      var s = window.takeAPickSounds;
+      if (s && typeof s.startTicking === "function") {
+        s.startTicking();
+      }
+    } catch (_) {}
+  }
+
+  function stopTickingSound() {
+    try {
+      var s = window.takeAPickSounds;
+      if (s && typeof s.stopTicking === "function") {
+        s.stopTicking();
+      }
+    } catch (_) {}
+  }
+
   // --------------- overlay DOM ---------------
 
   function createOverlay() {
@@ -77,7 +95,6 @@ Contract with app.js
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      background: "#071020",
       zIndex: 9999,
       padding: "24px",
       boxSizing: "border-box",
@@ -88,12 +105,9 @@ Contract with app.js
     Object.assign(panel.style, {
       width: "min(520px, 96%)",
       maxWidth: "92vw",
-      background: "#0b1220",
       borderRadius: "12px",
       padding: "18px",
       boxSizing: "border-box",
-      boxShadow: "0 12px 40px rgba(2,6,23,0.7)",
-      color: "white",
       display: "flex",
       gap: "12px",
       flexDirection: "column",
@@ -106,8 +120,6 @@ Contract with app.js
       height: ITEM_HEIGHT * 3 + "px",
       overflow: "hidden",
       borderRadius: "8px",
-      background: "#081122",
-      border: "1px solid rgba(255,255,255,0.04)",
       position: "relative",
     });
 
@@ -130,8 +142,6 @@ Contract with app.js
       height: ITEM_HEIGHT + "px",
       top: "calc(50% - " + ITEM_HEIGHT / 2 + "px)",
       pointerEvents: "none",
-      borderTop: "2px solid rgba(255,255,255,0.06)",
-      borderBottom: "2px solid rgba(255,255,255,0.06)",
       boxSizing: "border-box",
     });
 
@@ -145,7 +155,6 @@ Contract with app.js
 
     var btnStyle = {
       background: "transparent",
-      border: "1px solid rgba(255,255,255,0.06)",
       color: "var(--muted, #94a3b8)",
       padding: "8px 12px",
       borderRadius: "8px",
@@ -193,7 +202,6 @@ Contract with app.js
           padding: "0 12px",
           boxSizing: "border-box",
           fontSize: "16px",
-          borderBottom: "1px solid rgba(255,255,255,0.02)",
           display: "block",
         });
         frag.appendChild(div);
@@ -221,6 +229,7 @@ Contract with app.js
     try {
       if (overlayEl) overlayEl.remove();
     } catch (_) {}
+    stopTickingSound();
     setSpinButton(false);
   }
 
@@ -309,10 +318,12 @@ Contract with app.js
     );
     announce("Spin started.");
     setSpinButton(true);
+    startTickingSound();
 
     // ---- reduced motion: skip animation ----
     if (prefersReducedMotion()) {
       list.style.transform = "translateY(-" + landY + "px)";
+      stopTickingSound();
       wireButtons(overlay, winnerName);
       return;
     }
@@ -334,6 +345,7 @@ Contract with app.js
       } else {
         // ensure we land with the winner centered
         list.style.transform = "translateY(-" + landY + "px)";
+        stopTickingSound();
 
         // reveal the winner only after the reel has fully stopped
         requestAnimationFrame(function () {

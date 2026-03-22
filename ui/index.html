@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>Take a Pick — Name Picker</title>
 
+        <link rel="stylesheet" href="css/palette.css" />
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="stylesheet" href="css/reel.css" />
 
@@ -36,10 +37,20 @@
                             aria-expanded="false"
                             title="Select theme (system, light, dark)"
                         >
-                            <span class="theme-icon" aria-hidden="true">
-                                <!-- decorative three-stripe icon: left=system, middle=light, right=dark -->
-                                <i aria-hidden="true"></i>
-                            </span>
+                            <img
+                                class="theme-icon"
+                                src="static/system.svg"
+                                alt=""
+                                aria-hidden="true"
+                                width="18"
+                                height="18"
+                            />
+                            <span
+                                class="theme-label"
+                                aria-live="polite"
+                                aria-atomic="true"
+                                >System</span
+                            >
                             <span class="sr-only">Theme</span>
                         </button>
 
@@ -52,9 +63,13 @@
                                     class="theme-option"
                                     data-theme="system"
                                 >
-                                    <span class="option-icon" aria-hidden="true"
-                                        >⚙️</span
-                                    >
+                                    <img
+                                        src="static/system.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                        width="18"
+                                        height="18"
+                                    />
                                     <span>System</span>
                                 </button>
                             </li>
@@ -65,9 +80,13 @@
                                     class="theme-option"
                                     data-theme="light"
                                 >
-                                    <span class="option-icon" aria-hidden="true"
-                                        >🌞</span
-                                    >
+                                    <img
+                                        src="static/light.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                        width="18"
+                                        height="18"
+                                    />
                                     <span>Light</span>
                                 </button>
                             </li>
@@ -78,9 +97,13 @@
                                     class="theme-option"
                                     data-theme="dark"
                                 >
-                                    <span class="option-icon" aria-hidden="true"
-                                        >🌙</span
-                                    >
+                                    <img
+                                        src="static/dark.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                        width="18"
+                                        height="18"
+                                    />
                                     <span>Dark</span>
                                 </button>
                             </li>
@@ -95,18 +118,42 @@
                 <!-- Left: chips input area -->
                 <section class="chip-panel" aria-labelledby="names-heading">
                     <h2 id="names-heading" class="sr-only">Names</h2>
-                    <p class="count-badge" id="namesCount" aria-hidden="true">
-                        0 names
-                    </p>
+                    <div
+                        class="chip-input-row"
+                        role="group"
+                        aria-label="Add name"
+                        style="
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            margin-bottom: 10px;
+                        "
+                    >
+                        <div
+                            id="chip-input-slot"
+                            aria-live="polite"
+                            aria-atomic="true"
+                            style="flex: 1 1 auto"
+                        ></div>
+                        <p
+                            class="count-badge"
+                            id="namesCount"
+                            aria-hidden="true"
+                            style="white-space: nowrap"
+                        >
+                            0 names
+                        </p>
+                    </div>
 
-                    <!-- Container where JS renders chip rows -->
-                    <ul
-                        id="chips-container"
-                        class="chip-list"
-                        role="list"
-                        aria-live="polite"
-                        aria-atomic="false"
-                    ></ul>
+                    <div class="chip-list-wrapper">
+                        <ul
+                            id="chips-container"
+                            class="chip-list"
+                            role="list"
+                            aria-live="polite"
+                            aria-atomic="false"
+                        ></ul>
+                    </div>
 
                     <p class="helper" style="margin-top: 10px">
                         <strong>Tip:</strong> Press Enter to commit a name.
@@ -216,6 +263,7 @@
             </noscript>
         </main>
 
+        <script src="js/sounds.js" defer></script>
         <script src="js/app.js" defer></script>
         <script src="js/reel.js" defer></script>
     </body>

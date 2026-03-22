@@ -22,6 +22,13 @@ module's API (e.g. removeName) to mutate the list.
 
   // ---- Config ----
   const STORAGE_KEY = "takeapick:v1";
+  const THEME_STORAGE_KEY = STORAGE_KEY + ":theme";
+  const THEME_ORDER = ["system", "light", "dark"];
+  const THEME_ICON_MAP = {
+    system: "static/system.svg",
+    light: "static/light.svg",
+    dark: "static/dark.svg",
+  };
   const MIN_NAMES_TO_SPIN = 2;
   const WARN_THRESHOLD = 25;
 
@@ -37,8 +44,15 @@ module's API (e.g. removeName) to mutate the list.
   let audioToggle = null;
   let announcer = null;
   let namesCountEl = null;
+  let chipInputSlot = null;
   let warningEl = null;
   let winnerEl = null;
+  let themeButton = null;
+  let themeIconEl = null;
+  let themeOptions = [];
+
+  // Theme state
+  let currentTheme = "system";
 
   // ---- App state (single authoritative list) ----
   const state = {
@@ -213,7 +227,7 @@ module's API (e.g. removeName) to mutate the list.
     input.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter") {
         ev.preventDefault();
-        commitTrailing(input.value, hint);
+        commitTrailing(input.value, hint, input);
       } else if (ev.key === "Escape") {
         input.value = "";
         input.blur();
@@ -221,7 +235,7 @@ module's API (e.g. removeName) to mutate the list.
     });
 
     input.addEventListener("blur", () => {
-      commitTrailing(input.value, hint);
+      commitTrailing(input.value, hint, input);
     });
 
     row.appendChild(input);
@@ -270,7 +284,7 @@ module's API (e.g. removeName) to mutate the list.
     render();
   }
 
-  function commitTrailing(rawValue, hintEl) {
+  function commitTrailing(rawValue, hintEl, inputEl) {
     const value = trim(rawValue);
     if (!value) return;
     if (existsName(value)) {
@@ -288,8 +302,14 @@ module's API (e.g. removeName) to mutate the list.
     saveState();
     render();
     setTimeout(() => {
-      const inputs = chipsEl.querySelectorAll(".chip-input");
-      if (inputs.length) inputs[inputs.length - 1].focus();
+      const slotInput =
+        (chipInputSlot && chipInputSlot.querySelector(".chip-input")) ||
+        (inputEl &&
+          inputEl.closest(".chip-panel")?.querySelector(".chip-input"));
+      if (slotInput) {
+        slotInput.value = "";
+        slotInput.focus();
+      }
     }, 0);
     announce(`${value} added.`);
   }
@@ -361,9 +381,94 @@ module's API (e.g. removeName) to mutate the list.
       const row = createExistingRow(entry, i);
       chipsEl.appendChild(row);
     });
-    const { row: trailingRow } = createTrailingRow();
-    chipsEl.appendChild(trailingRow);
+    if (chipInputSlot) {
+      chipInputSlot.innerHTML = "";
+      const { row: trailingRow } = createTrailingRow();
+      chipInputSlot.appendChild(trailingRow);
+    }
     updateControls();
+  }
+
+  // ---- Theme handling ----
+  function renderThemeButton() {
+    if (!themeButton) return;
+    const label = currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1);
+    themeButton.setAttribute("aria-label", `Theme: ${label}`);
+    themeButton.setAttribute("title", `Theme: ${label}`);
+
+    if (themeIconEl) {
+      const iconSrc = THEME_ICON_MAP[currentTheme] || THEME_ICON_MAP.system;
+      themeIconEl.setAttribute("src", iconSrc);
+      themeIconEl.setAttribute("aria-hidden", "true");
+    }
+
+    let labelEl =
+      themeButton.querySelector(".theme-label") ||
+      themeButton.querySelector(".theme-active");
+    if (!labelEl) {
+      labelEl = document.createElement("span");
+      labelEl.className = "theme-label";
+      themeButton.appendChild(labelEl);
+    }
+    labelEl.textContent = label;
+  }
+
+  function updateThemeMenuActive() {
+    if (!themeOptions) return;
+    themeOptions.forEach((btn) => {
+      const t = btn.dataset.theme;
+      btn.classList.toggle("active", t === currentTheme);
+    });
+  }
+
+  function applyTheme(theme) {
+    currentTheme = THEME_ORDER.includes(theme) ? theme : "system";
+    if (currentTheme === "system") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", currentTheme);
+    }
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+    } catch (_) {}
+    renderThemeButton();
+    updateThemeMenuActive();
+  }
+
+  function loadTheme() {
+    let stored = null;
+    try {
+      stored = localStorage.getItem(THEME_STORAGE_KEY);
+    } catch (_) {}
+    currentTheme = THEME_ORDER.includes(stored) ? stored : "system";
+    if (currentTheme === "system") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", currentTheme);
+    }
+    renderThemeButton();
+    updateThemeMenuActive();
+  }
+
+  function cycleTheme() {
+    const idx = THEME_ORDER.indexOf(currentTheme);
+    const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+    applyTheme(next);
+  }
+
+  function wireThemeButton() {
+    if (themeButton) {
+      themeButton.addEventListener("click", cycleTheme);
+    }
+    if (themeOptions && themeOptions.length) {
+      themeOptions.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          applyTheme(btn.dataset.theme || "system");
+        });
+      });
+    }
+    renderThemeButton();
+    updateThemeMenuActive();
   }
 
   // ---- Wire controls ----
@@ -384,7 +489,6 @@ module's API (e.g. removeName) to mutate the list.
 
     if (clearBtn) {
       clearBtn.addEventListener("click", () => {
-        if (!confirm("Clear all names?")) return;
         state.entries = [];
         saveState();
         render();
@@ -438,10 +542,14 @@ module's API (e.g. removeName) to mutate the list.
     namesCountEl =
       document.getElementById("namesCount") ||
       document.getElementById("count-badge");
+    chipInputSlot = document.getElementById("chip-input-slot");
     warningEl =
       document.getElementById("chips-warning") ||
       document.getElementById("warning");
     winnerEl = document.getElementById("winnerDisplay");
+    themeButton = document.querySelector(".theme-button");
+    themeIconEl = themeButton ? themeButton.querySelector(".theme-icon") : null;
+    themeOptions = Array.from(document.querySelectorAll(".theme-option"));
   }
 
   function init() {
@@ -453,6 +561,8 @@ module's API (e.g. removeName) to mutate the list.
       return;
     }
 
+    loadTheme();
+    wireThemeButton();
     loadState();
 
     // normalize on load: trim & dedupe preserving first occurrences

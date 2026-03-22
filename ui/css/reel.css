@@ -18,25 +18,6 @@
   - Ensure accessibility (sufficient contrast, focus styles)
 */
 
-/* Root variables with sensible fallbacks in case the main stylesheet isn't loaded */
-:root {
-    --reel-overlay-bg: rgba(2, 6, 23, 0.7);
-    --reel-panel-bg: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.02),
-        rgba(255, 255, 255, 0.01)
-    );
-    --reel-panel-border: rgba(255, 255, 255, 0.04);
-    --reel-text: #e6eef8;
-    --reel-muted: #94a3b8;
-    --reel-accent: #3b82f6;
-    --reel-accent-weak: rgba(96, 165, 250, 0.08);
-    --reel-item-border: rgba(255, 255, 255, 0.02);
-    --reel-shadow: 0 12px 40px rgba(2, 6, 23, 0.7);
-    --reel-radius: 12px;
-    --reel-z: 9999;
-}
-
 /* Full-screen dim overlay */
 .tap-reel-overlay {
     position: fixed;
@@ -45,6 +26,7 @@
     align-items: center;
     justify-content: center;
     background: var(--reel-overlay-bg);
+    backdrop-filter: blur(6px);
     z-index: var(--reel-z);
     padding: 20px;
     box-sizing: border-box;
@@ -79,12 +61,8 @@
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.18),
-        rgba(255, 255, 255, 0.01)
-    );
-    border: 1px solid rgba(255, 255, 255, 0.02);
+    background: var(--reel-viewport-bg);
+    border: 1px solid var(--reel-item-border);
     box-sizing: border-box;
 }
 
@@ -114,7 +92,7 @@
 
 /* Slight visual separation for alternating rows (subtle) */
 .tap-reel-item:nth-child(odd) {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.002), transparent);
+    background: var(--reel-row-alt-bg);
 }
 
 /* Pointer band to indicate the selected row */
@@ -126,25 +104,17 @@
     top: calc(50% - 28px); /* center vertically */
     pointer-events: none;
     box-sizing: border-box;
-    border-top: 2px solid rgba(255, 255, 255, 0.04);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.04);
+    border-top: 2px solid var(--reel-pointer-border);
+    border-bottom: 2px solid var(--reel-pointer-border);
+    background: var(--reel-pointer-bg);
     mix-blend-mode: normal;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.01),
-        rgba(255, 255, 255, 0)
-    );
 }
 
 /* Visual highlight applied to the winning item (added dynamically) */
 .tap-reel-item.winner {
     display: flex;
     align-items: center;
-    background: linear-gradient(
-        90deg,
-        rgba(59, 130, 246, 0.08),
-        rgba(96, 165, 250, 0.06)
-    );
+    background: var(--reel-winner-bg);
     font-weight: 700;
     color: var(--reel-text);
     padding: 0 12px;
@@ -154,7 +124,7 @@
 .tap-reel-item.winner::before,
 .tap-reel-item.winner::after {
     font-size: 12px;
-    color: var(--reel-accent, #3b82f6);
+    color: var(--reel-accent);
     pointer-events: none;
     flex-shrink: 0;
 }
@@ -173,7 +143,7 @@
 /* Button styling inside the panel (e.g., Cancel) */
 .tap-reel-panel button {
     appearance: none;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--reel-button-border);
     background: transparent;
     color: var(--reel-muted);
     padding: 8px 12px;
@@ -188,7 +158,7 @@
 
 .tap-reel-panel button:hover,
 .tap-reel-panel button:focus {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--reel-button-hover-bg);
     color: var(--reel-text);
     transform: translateY(-1px);
     outline: none;
@@ -201,7 +171,7 @@
 /* Accessible focus ring for keyboard users */
 .tap-reel-panel button:focus-visible,
 .tap-reel-item:focus-visible {
-    outline: 3px solid rgba(59, 130, 246, 0.18);
+    outline: 3px solid var(--reel-accent-weak);
     outline-offset: 2px;
     border-radius: 6px;
 }
