@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Take a Pick — Name Picker</title>
+
+        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/reel.css" />
+
+        <meta
+            name="description"
+            content="A lightweight single-reel slot-style name picker. Add names as chips, then spin to pick a winner."
+        />
+    </head>
+
+    <body>
+        <!-- Top-level bar (visual only for now) -->
+        <header class="topbar" role="banner" aria-label="Application top bar">
+            <div class="topbar-inner">
+                <div class="brand" aria-hidden="false">
+                    <span class="brand-title">Take a Pick</span>
+                </div>
+
+                <div class="topbar-actions">
+                    <!-- Theme selector: visual-only at this stage -->
+                    <div
+                        class="theme-selector"
+                        role="group"
+                        aria-label="Theme selector"
+                    >
+                        <button
+                            class="theme-button"
+                            type="button"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            title="Select theme (system, light, dark)"
+                        >
+                            <span class="theme-icon" aria-hidden="true">
+                                <!-- decorative three-stripe icon: left=system, middle=light, right=dark -->
+                                <i aria-hidden="true"></i>
+                            </span>
+                            <span class="sr-only">Theme</span>
+                        </button>
+
+                        <!-- Visual-only menu: shown on hover/focus via CSS -->
+                        <ul class="theme-menu" role="menu" aria-hidden="true">
+                            <li role="none">
+                                <button
+                                    role="menuitem"
+                                    type="button"
+                                    class="theme-option"
+                                    data-theme="system"
+                                >
+                                    <span class="option-icon" aria-hidden="true"
+                                        >⚙️</span
+                                    >
+                                    <span>System</span>
+                                </button>
+                            </li>
+                            <li role="none">
+                                <button
+                                    role="menuitem"
+                                    type="button"
+                                    class="theme-option"
+                                    data-theme="light"
+                                >
+                                    <span class="option-icon" aria-hidden="true"
+                                        >🌞</span
+                                    >
+                                    <span>Light</span>
+                                </button>
+                            </li>
+                            <li role="none">
+                                <button
+                                    role="menuitem"
+                                    type="button"
+                                    class="theme-option"
+                                    data-theme="dark"
+                                >
+                                    <span class="option-icon" aria-hidden="true"
+                                        >🌙</span
+                                    >
+                                    <span>Dark</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app panel" role="application" aria-labelledby="app-title">
+            <section class="layout" id="main-grid">
+                <!-- Left: chips input area -->
+                <section class="chip-panel" aria-labelledby="names-heading">
+                    <h2 id="names-heading" class="sr-only">Names</h2>
+                    <p class="count-badge" id="namesCount" aria-hidden="true">
+                        0 names
+                    </p>
+
+                    <!-- Container where JS renders chip rows -->
+                    <ul
+                        id="chips-container"
+                        class="chip-list"
+                        role="list"
+                        aria-live="polite"
+                        aria-atomic="false"
+                    ></ul>
+
+                    <p class="helper" style="margin-top: 10px">
+                        <strong>Tip:</strong> Press Enter to commit a name.
+                        Press Backspace on an empty chip to remove it. Use
+                        Ctrl/Cmd+Enter to spin.
+                    </p>
+                </section>
+
+                <!-- Right: controls and summary -->
+                <aside class="controls" aria-labelledby="controls-heading">
+                    <h3 id="controls-heading" class="sr-only">Controls</h3>
+
+                    <div class="card actions" role="group" aria-label="Actions">
+                        <div
+                            style="display: flex; gap: 8px; align-items: center"
+                        >
+                            <button
+                                id="spin-button"
+                                class="btn btn-primary"
+                                type="button"
+                                disabled
+                            >
+                                Spin
+                            </button>
+                            <button
+                                id="clear-button"
+                                class="btn btn-secondary"
+                                type="button"
+                                disabled
+                            >
+                                Clear All
+                            </button>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 12px;
+                                display: flex;
+                                gap: 8px;
+                                align-items: center;
+                            "
+                        >
+                            <label
+                                style="
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    color: var(--muted);
+                                    font-size: 0.95rem;
+                                "
+                            >
+                                <input
+                                    id="audio-toggle"
+                                    type="checkbox"
+                                    aria-checked="true"
+                                />
+                                <span>Audio</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p
+                        id="chips-warning"
+                        class="warning"
+                        style="display: none; margin-top: 8px"
+                        aria-live="polite"
+                    ></p>
+
+                    <div
+                        class="card winner"
+                        role="region"
+                        aria-label="Winner"
+                        style="margin-top: 12px"
+                    >
+                        <div><strong>Winner</strong></div>
+                        <div
+                            id="winnerDisplay"
+                            style="
+                                margin-top: 8px;
+                                color: var(--accent);
+                                font-weight: 700;
+                            "
+                        >
+                            —
+                        </div>
+                    </div>
+                </aside>
+            </section>
+
+            <!-- Live announcer for screen readers -->
+            <aside
+                id="announcements"
+                class="live-region"
+                aria-live="polite"
+                aria-atomic="true"
+            ></aside>
+
+            <!-- Non-JS fallback (visible only when JavaScript is disabled) -->
+            <noscript>
+                <div
+                    role="status"
+                    style="margin-top: 12px; color: var(--muted)"
+                >
+                    This application requires JavaScript to function. Please
+                    enable JavaScript in your browser.
+                </div>
+            </noscript>
+        </main>
+
+        <script src="js/app.js" defer></script>
+        <script src="js/reel.js" defer></script>
+    </body>
+</html>
