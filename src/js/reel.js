@@ -54,14 +54,18 @@ function announce(text) {
         el.textContent = text;
       }, 60);
     }
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 function setSpinButton(disabled) {
   try {
     const btn = document.getElementById("spin-button");
     if (btn) btn.disabled = !!disabled;
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 // --------------- overlay DOM ---------------
@@ -205,7 +209,9 @@ function highlightItem(listEl, itemIndex) {
 function closeOverlay(overlayEl) {
   try {
     if (overlayEl) overlayEl.remove();
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
   stopTicking();
   setSpinButton(false);
 }
@@ -214,7 +220,9 @@ function showWinnerInUI(winnerName) {
   try {
     const el = document.getElementById("winnerDisplay");
     if (el) el.textContent = sanitize(winnerName);
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 // --------------- wire OK / Remove buttons ---------------
@@ -296,7 +304,6 @@ function runSpin(names) {
 
   const duration = BASE_DURATION + Math.floor(Math.random() * EXTRA_RANDOM);
   const startTime = performance.now();
-  let rafId = null;
   let prevRow = -1;
 
   function step(now) {
@@ -312,7 +319,7 @@ function runSpin(names) {
     list.style.transform = "translateY(-" + currentY + "px)";
 
     if (t < 1) {
-      rafId = requestAnimationFrame(step);
+      requestAnimationFrame(step);
     } else {
       list.style.transform = "translateY(-" + landY + "px)";
       stopTicking();
@@ -326,7 +333,7 @@ function runSpin(names) {
     }
   }
 
-  rafId = requestAnimationFrame(step);
+  requestAnimationFrame(step);
 }
 
 // --------------- event listener ---------------
@@ -338,7 +345,9 @@ function onSpinEvent(e) {
   if (!names || names.length === 0) {
     try {
       names = getNames();
-    } catch (_) {}
+    } catch (_) {
+      /* ignore */
+    }
   }
 
   if (!names || names.length === 0) {

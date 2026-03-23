@@ -16,7 +16,9 @@ function readAudioEnabled() {
     const stored = localStorage.getItem(AUDIO_SETTING_KEY);
     if (stored === "0") return false;
     if (stored === "1") return true;
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
   return true;
 }
 
@@ -173,7 +175,9 @@ export function setEnabled(flag) {
   sounds.setEnabled(flag);
   try {
     localStorage.setItem(AUDIO_SETTING_KEY, flag ? "1" : "0");
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 export function resumeContext() {

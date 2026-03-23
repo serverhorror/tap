@@ -420,7 +420,9 @@ function applyTheme(theme) {
   }
   try {
     localStorage.setItem(STORAGE_KEYS.theme, currentTheme);
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
   renderThemeButton();
   updateThemeMenuActive();
 }
@@ -429,7 +431,9 @@ function loadTheme() {
   let stored = null;
   try {
     stored = localStorage.getItem(STORAGE_KEYS.theme);
-  } catch (_) {}
+  } catch (_) {
+    /* ignore */
+  }
   currentTheme = THEME_ORDER.includes(stored) ? stored : "system";
   if (currentTheme === "system") {
     document.documentElement.removeAttribute("data-theme");

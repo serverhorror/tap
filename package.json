@@ -3,13 +3,29 @@
   "version": "1.0.0",
   "description": "Slot machine style name picker UI.",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "test": "vitest"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",
     "@testing-library/user-event": "^14.5.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
     "jsdom": "^24.0.0",
+    "prettier": "^3.2.5",
+    "vite": "^5.2.0",
     "vitest": "^1.5.0"
   }
 }
