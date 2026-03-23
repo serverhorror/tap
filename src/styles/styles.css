@@ -458,6 +458,26 @@ img {
   font-size: 0.9rem;
 }
 
+.chip-hint {
+  display: none;
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.chip-hint.is-visible,
+.hint.is-visible {
+  display: inline-block;
+}
+
+.warning[hidden] {
+  display: none !important;
+}
+
+.warning-visible {
+  display: flex;
+}
+
 /* chip list - vertical stack of inputs */
 .chip-list {
   display: grid;

@@ -99,9 +99,11 @@ function announce(msg) {
 function showHint(hintEl, msg) {
   if (!hintEl) return;
   hintEl.textContent = msg;
-  hintEl.style.display = "";
+  hintEl.hidden = false;
+  hintEl.classList.add("is-visible");
   setTimeout(() => {
-    hintEl.style.display = "none";
+    hintEl.hidden = true;
+    hintEl.classList.remove("is-visible");
   }, 2000);
 }
 
@@ -136,10 +138,12 @@ function updateControls() {
 
   if (warningEl) {
     if (count > WARN_THRESHOLD) {
-      warningEl.style.display = "";
+      warningEl.hidden = false;
+      warningEl.classList.add("warning-visible");
       warningEl.textContent = `Large list (${count}). For best UX try fewer than ${WARN_THRESHOLD} names.`;
     } else {
-      warningEl.style.display = "none";
+      warningEl.hidden = true;
+      warningEl.classList.remove("warning-visible");
       warningEl.textContent = "";
     }
   }
@@ -167,10 +171,8 @@ function createExistingRow(entry, index) {
   remove.textContent = "✕";
 
   const hint = document.createElement("div");
-  hint.className = "chip-hint";
-  hint.style.display = "none";
-  hint.style.marginLeft = "8px";
-  hint.style.color = "var(--muted, #94a3b8)";
+  hint.className = "chip-hint hint";
+  hint.hidden = true;
   hint.setAttribute("aria-hidden", "true");
 
   input.addEventListener("keydown", (ev) => {
@@ -226,10 +228,8 @@ function createTrailingRow() {
   input.autocomplete = "off";
 
   const hint = document.createElement("div");
-  hint.className = "chip-hint";
-  hint.style.display = "none";
-  hint.style.marginLeft = "8px";
-  hint.style.color = "var(--muted, #94a3b8)";
+  hint.className = "chip-hint hint";
+  hint.hidden = true;
   hint.setAttribute("aria-hidden", "true");
 
   input.addEventListener("keydown", (ev) => {

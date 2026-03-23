@@ -18,6 +18,10 @@
   - Ensure accessibility (sufficient contrast, focus styles)
 */
 
+:root {
+  --tap-reel-item-height: 56px;
+}
+
 /* Full-screen dim overlay */
 .tap-reel-overlay {
   position: fixed;
@@ -60,6 +64,7 @@
 .tap-reel-viewport {
   position: relative;
   overflow: hidden;
+  height: calc(var(--tap-reel-item-height) * 3);
   border-radius: 8px;
   background: var(--reel-viewport-bg);
   border: 1px solid var(--reel-item-border);
@@ -69,7 +74,7 @@
 /* The scrolling list container - transform applied to this element */
 .tap-reel-list {
   transform: translateY(0);
-  transition: transform 400ms cubic-bezier(0.22, 0.9, 0.3, 1);
+  transition: none;
   will-change: transform;
 }
 
@@ -78,8 +83,8 @@
   display: block;
   padding: 0 12px;
   box-sizing: border-box;
-  height: 56px; /* match ITEM_HEIGHT in reel.js */
-  line-height: 56px;
+  height: var(--tap-reel-item-height); /* match ITEM_HEIGHT in reel.js */
+  line-height: var(--tap-reel-item-height);
   font-size: 16px;
   border-bottom: 1px solid var(--reel-item-border);
   color: var(--reel-text);
@@ -100,14 +105,21 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 56px; /* same as .tap-reel-item height */
-  top: calc(50% - 28px); /* center vertically */
+  height: var(--tap-reel-item-height); /* same as .tap-reel-item height */
+  top: calc(50% - (var(--tap-reel-item-height) / 2)); /* center vertically */
   pointer-events: none;
   box-sizing: border-box;
   border-top: 2px solid var(--reel-pointer-border);
   border-bottom: 2px solid var(--reel-pointer-border);
   background: var(--reel-pointer-bg);
   mix-blend-mode: normal;
+}
+
+.tap-reel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
 }
 
 /* Visual highlight applied to the winning item (added dynamically) */
@@ -178,17 +190,14 @@
 
 /* Small screens: reduce dimensions */
 @media (max-width: 420px) {
+  :root {
+    --tap-reel-item-height: 48px;
+  }
   .tap-reel-panel {
     padding: 12px;
   }
   .tap-reel-item {
-    height: 48px;
-    line-height: 48px;
     font-size: 15px;
-  }
-  .tap-reel-pointer {
-    height: 48px;
-    top: calc(50% - 24px);
   }
 }
 

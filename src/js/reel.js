@@ -18,7 +18,7 @@ Contract with app.js
 */
 
 const REPEATS = 10; // how many times the name list is repeated in the DOM
-const ITEM_HEIGHT = 56; // px per reel row
+const ITEM_HEIGHT = 56; // px per reel row (matches CSS)
 const BASE_DURATION = 3000;
 const EXTRA_RANDOM = 900;
 
@@ -68,90 +68,46 @@ function setSpinButton(disabled) {
   }
 }
 
+function getItemHeight() {
+  try {
+    const root = document.documentElement;
+    const raw = root
+      ? getComputedStyle(root).getPropertyValue("--tap-reel-item-height")
+      : "";
+    const parsed = parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : ITEM_HEIGHT;
+  } catch (_) {
+    return ITEM_HEIGHT;
+  }
+}
+
 // --------------- overlay DOM ---------------
 
 function createOverlay() {
   const overlay = document.createElement("div");
   overlay.className = "tap-reel-overlay";
-  Object.assign(overlay.style, {
-    position: "fixed",
-    inset: "0",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 9999,
-    padding: "24px",
-    boxSizing: "border-box",
-  });
 
   const panel = document.createElement("div");
   panel.className = "tap-reel-panel";
-  Object.assign(panel.style, {
-    width: "min(520px, 96%)",
-    maxWidth: "92vw",
-    borderRadius: "12px",
-    padding: "18px",
-    boxSizing: "border-box",
-    display: "flex",
-    gap: "12px",
-    flexDirection: "column",
-    alignItems: "stretch",
-  });
 
   const viewport = document.createElement("div");
   viewport.className = "tap-reel-viewport";
-  Object.assign(viewport.style, {
-    height: ITEM_HEIGHT * 3 + "px",
-    overflow: "hidden",
-    borderRadius: "8px",
-    position: "relative",
-  });
 
   const list = document.createElement("div");
   list.className = "tap-reel-list";
-  Object.assign(list.style, {
-    transform: "translateY(0px)",
-    transition: "none",
-    willChange: "transform",
-  });
-
   list.dataset.revealed = "false";
 
   const pointer = document.createElement("div");
   pointer.className = "tap-reel-pointer";
-  Object.assign(pointer.style, {
-    position: "absolute",
-    left: "0",
-    right: "0",
-    height: ITEM_HEIGHT + "px",
-    top: "calc(50% - " + ITEM_HEIGHT / 2 + "px)",
-    pointerEvents: "none",
-    boxSizing: "border-box",
-  });
 
   const footer = document.createElement("div");
-  Object.assign(footer.style, {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "8px",
-    marginTop: "6px",
-  });
-
-  const btnStyle = {
-    background: "transparent",
-    color: "var(--muted, #94a3b8)",
-    padding: "8px 12px",
-    borderRadius: "8px",
-    cursor: "pointer",
-  };
+  footer.className = "tap-reel-footer";
 
   const okBtn = document.createElement("button");
   okBtn.textContent = "OK";
-  Object.assign(okBtn.style, btnStyle);
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "Remove";
-  Object.assign(removeBtn.style, btnStyle);
 
   footer.appendChild(okBtn);
   footer.appendChild(removeBtn);
@@ -177,14 +133,6 @@ function buildReelItems(listEl, names, repeats) {
       const div = document.createElement("div");
       div.className = "tap-reel-item";
       div.textContent = sanitize(names[i]);
-      Object.assign(div.style, {
-        height: ITEM_HEIGHT + "px",
-        lineHeight: ITEM_HEIGHT + "px",
-        padding: "0 12px",
-        boxSizing: "border-box",
-        fontSize: "16px",
-        display: "block",
-      });
       frag.appendChild(div);
     }
   }
@@ -269,6 +217,7 @@ function runSpin(names) {
   const N = names.length;
   const winnerIndex = Math.floor(Math.random() * N);
   const winnerName = names[winnerIndex];
+  const itemHeight = getItemHeight();
 
   const parts = createOverlay();
   const overlay = parts.overlay;
@@ -280,9 +229,9 @@ function runSpin(names) {
   const midRepeat = Math.floor(REPEATS / 2);
   const baseIndex = midRepeat * N + winnerIndex;
   const finalIndex = baseIndex;
-  const finalY = finalIndex * ITEM_HEIGHT;
+  const finalY = finalIndex * itemHeight;
 
-  const centerOffset = ITEM_HEIGHT;
+  const centerOffset = itemHeight;
   const landY = finalY - centerOffset;
 
   window.dispatchEvent(
@@ -311,7 +260,7 @@ function runSpin(names) {
     const t = Math.min(1, elapsed / duration);
     const eased = easeOutCubic(t);
     const currentY = eased * landY;
-    const currentRow = Math.floor(currentY / ITEM_HEIGHT);
+    const currentRow = Math.floor(currentY / itemHeight);
     if (currentRow !== prevRow) {
       prevRow = currentRow;
       playTick();
