@@ -53,8 +53,8 @@
   border: 1px solid var(--reel-panel-border);
 }
 
-/* Title (the script creates a title div as first child) */
-.tap-reel-panel > div:first-child {
+/* Title (optional element with .tap-reel-title) */
+.tap-reel-title {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--reel-text);
@@ -86,6 +86,7 @@
   height: var(--tap-reel-item-height); /* match ITEM_HEIGHT in reel.js */
   line-height: var(--tap-reel-item-height);
   font-size: 16px;
+  font-weight: 400;
   border-bottom: 1px solid var(--reel-item-border);
   color: var(--reel-text);
   background: transparent;
