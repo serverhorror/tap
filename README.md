@@ -2,6 +2,8 @@
 
 take_a_pick is a lightweight, client-side slot machine–style name picker that lets you enter names as chips, spin a visual reel to pick a winner, and optionally remove the winner from the list while persisting your state and preferences in localStorage.
 
+Live demo: https://serverhorror.github.io/tap
+
 ## Prerequisites
 
 - Node.js 22 LTS (recommended)
