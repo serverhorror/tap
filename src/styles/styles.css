@@ -492,10 +492,10 @@ img {
   align-items: center;
   gap: 8px;
   position: relative;
-  background: var(--chip-bg);
+  background: transparent;
   border-radius: 8px;
   border: 1px solid var(--chip-border);
-  padding: 8px;
+  padding: 0;
   transition:
     box-shadow var(--transition),
     transform var(--transition);
@@ -503,11 +503,8 @@ img {
 
 /* Focus/hover for chip row to improve affordance */
 .chip-row:focus-within,
-.chip-row:hover,
-.chip:focus-within,
-.chip:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+.chip:focus-within {
+  box-shadow: 0 0 0 2px var(--subtle-outline);
 }
 
 /* Text input inside a chip */
