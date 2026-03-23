@@ -212,7 +212,7 @@ function createExistingRow(entry, index) {
           input.focus();
           const L = input.value.length;
           input.setSelectionRange(L, L);
-        } catch (e) {
+        } catch (_e) {
           // ignore
         }
       }, 0);
