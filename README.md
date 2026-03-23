@@ -4,7 +4,7 @@ take_a_pick is a lightweight, client-side slot machine–style name picker that 
 
 ## Prerequisites
 
-- Node.js (LTS recommended)
+- Node.js 22 LTS (recommended)
 - npm
 
 ## Getting started (dev server)
