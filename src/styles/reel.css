@@ -90,7 +90,7 @@
   border-bottom: 1px solid var(--reel-item-border);
   color: var(--reel-text);
   background: transparent;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -127,10 +127,12 @@
 .tap-reel-item.winner {
   display: flex;
   align-items: center;
+  justify-content: center;
   background: var(--reel-winner-bg);
   font-weight: 700;
   color: var(--reel-text);
   padding: 0 12px;
+  text-align: center;
 }
 
 /* Inward-pointing arrows on the winner row (in-flow flex items) */
@@ -144,13 +146,12 @@
 
 .tap-reel-item.winner::before {
   content: "🎉▶";
-  margin-right: 12px;
+  margin-right: auto;
 }
 
 .tap-reel-item.winner::after {
   content: "◀";
   margin-left: auto;
-  padding-left: 12px;
 }
 
 /* Button styling inside the panel (e.g., Cancel) */
