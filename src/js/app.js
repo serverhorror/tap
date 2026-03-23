@@ -29,12 +29,40 @@ const THEME_ICON_MAP = {
   dark: "static/dark.svg",
 };
 const MIN_NAMES_TO_SPIN = 2;
-const WARN_THRESHOLD = 25;
+const WARN_THRESHOLD = 15;
 
 // ---- Utilities ----
 const uid = () => "id-" + Math.random().toString(36).slice(2, 9);
 const trim = (v) => String(v == null ? "" : v).trim();
 const dedupeKey = (v) => trim(v).toLowerCase();
+
+function captureActiveInput() {
+  const active = document.activeElement;
+  if (!active || !active.classList.contains("chip-input")) return null;
+  const row = active.closest(".chip-row");
+  if (!row) return null;
+  return {
+    id: row.dataset.id || null,
+    start: active.selectionStart ?? null,
+    end: active.selectionEnd ?? null,
+  };
+}
+
+function restoreActiveInput(ctx, removedId) {
+  if (!ctx || !ctx.id || ctx.id === removedId) return;
+  const target = chipsEl?.querySelector(
+    `.chip-row[data-id="${ctx.id}"] .chip-input`,
+  );
+  if (!target) return;
+  target.focus();
+  if (ctx.start != null && ctx.end != null) {
+    try {
+      target.setSelectionRange(ctx.start, ctx.end);
+    } catch (_) {
+      /* ignore */
+    }
+  }
+}
 
 // ---- Mutable DOM refs (populated at runtime) ----
 let chipsEl = null;
@@ -99,9 +127,11 @@ function announce(msg) {
 function showHint(hintEl, msg) {
   if (!hintEl) return;
   hintEl.textContent = msg;
-  hintEl.style.display = "";
+  hintEl.hidden = false;
+  hintEl.classList.add("is-visible");
   setTimeout(() => {
-    hintEl.style.display = "none";
+    hintEl.hidden = true;
+    hintEl.classList.remove("is-visible");
   }, 2000);
 }
 
@@ -135,11 +165,13 @@ function updateControls() {
   if (clearBtn) clearBtn.disabled = count === 0;
 
   if (warningEl) {
-    if (count > WARN_THRESHOLD) {
-      warningEl.style.display = "";
+    if (count >= WARN_THRESHOLD) {
+      warningEl.hidden = false;
+      warningEl.classList.add("warning-visible");
       warningEl.textContent = `Large list (${count}). For best UX try fewer than ${WARN_THRESHOLD} names.`;
     } else {
-      warningEl.style.display = "none";
+      warningEl.hidden = true;
+      warningEl.classList.remove("warning-visible");
       warningEl.textContent = "";
     }
   }
@@ -167,10 +199,8 @@ function createExistingRow(entry, index) {
   remove.textContent = "✕";
 
   const hint = document.createElement("div");
-  hint.className = "chip-hint";
-  hint.style.display = "none";
-  hint.style.marginLeft = "8px";
-  hint.style.color = "var(--muted, #94a3b8)";
+  hint.className = "chip-hint hint";
+  hint.hidden = true;
   hint.setAttribute("aria-hidden", "true");
 
   input.addEventListener("keydown", (ev) => {
@@ -201,6 +231,9 @@ function createExistingRow(entry, index) {
     commitExisting(entry.id, input.value, hint);
   });
 
+  remove.addEventListener("mousedown", (ev) => {
+    ev.preventDefault(); // keep current input focused while clicking remove
+  });
   remove.addEventListener("click", () => {
     removeEntry(entry.id, { focusPrev: true });
   });
@@ -226,10 +259,8 @@ function createTrailingRow() {
   input.autocomplete = "off";
 
   const hint = document.createElement("div");
-  hint.className = "chip-hint";
-  hint.style.display = "none";
-  hint.style.marginLeft = "8px";
-  hint.style.color = "var(--muted, #94a3b8)";
+  hint.className = "chip-hint hint";
+  hint.hidden = true;
   hint.setAttribute("aria-hidden", "true");
 
   input.addEventListener("keydown", (ev) => {
@@ -314,10 +345,12 @@ function removeEntry(id, opts = {}) {
     render();
     return null;
   }
+  const focusCtx = captureActiveInput();
   const removed = state.entries.splice(idx, 1)[0];
   saveState();
   render();
-  if (opts.focusPrev) {
+  restoreActiveInput(focusCtx, id);
+  if (opts.focusPrev && (!focusCtx || focusCtx.id === id)) {
     setTimeout(() => {
       const inputs = Array.from(chipsEl.querySelectorAll(".chip-input"));
       const focusIndex = Math.max(0, Math.min(inputs.length - 1, idx - 1));
