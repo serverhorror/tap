@@ -29,7 +29,7 @@ const THEME_ICON_MAP = {
   dark: "static/dark.svg",
 };
 const MIN_NAMES_TO_SPIN = 2;
-const WARN_THRESHOLD = 25;
+const WARN_THRESHOLD = 5;
 
 // ---- Utilities ----
 const uid = () => "id-" + Math.random().toString(36).slice(2, 9);
