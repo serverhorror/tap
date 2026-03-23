@@ -486,10 +486,12 @@ img {
 }
 
 /* Single chip row */
+.chip-row,
 .chip {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
   background: var(--chip-bg);
   border-radius: 8px;
   border: 1px solid var(--chip-border);
@@ -500,6 +502,8 @@ img {
 }
 
 /* Focus/hover for chip row to improve affordance */
+.chip-row:focus-within,
+.chip-row:hover,
 .chip:focus-within,
 .chip:hover {
   transform: translateY(-1px);
@@ -510,12 +514,21 @@ img {
 .chip-input {
   flex: 1 1 auto;
   background: transparent;
-  border: none;
+  border: 1px solid var(--surface-border);
   outline: none;
   color: var(--text);
   font-size: 0.98rem;
-  padding: 6px 4px;
+  padding: 6px 44px 6px 10px;
   min-width: 90px;
+  border-radius: 6px;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.chip-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--subtle-outline);
 }
 
 /* placeholder appearance */
@@ -524,26 +537,38 @@ img {
 }
 
 /* remove button (X) */
-.chip-remove {
+.chip-row .chip-remove {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--muted);
   cursor: pointer;
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
   transition:
     background var(--transition),
-    color var(--transition);
+    color var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
 }
 
-.chip-remove:hover,
-.chip-remove:focus {
+.chip-row .chip-remove:hover,
+.chip-row .chip-remove:focus {
   background: var(--subtle-fill);
-  color: var(--danger);
+  color: var(--text);
+}
+
+.chip-row .chip-remove:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--subtle-outline);
 }
 
 /* If chip is read-only/locked (future feature) */
@@ -567,6 +592,20 @@ img {
   border: 1px solid var(--surface-border-soft);
   width: 100%;
   box-sizing: border-box;
+}
+
+.card.winner {
+  text-align: center;
+}
+
+.card.winner #winnerDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 8px;
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .card + .card {
