@@ -1,5 +1,5 @@
 import { removeName, getNames } from "./app.js";
-import { startTicking, stopTicking } from "./sounds.js";
+import { playTick, stopTicking } from "./sounds.js";
 
 /*
 take_a_pick - reel.js (ES module)
@@ -284,11 +284,12 @@ function runSpin(names) {
   );
   announce("Spin started.");
   setSpinButton(true);
-  startTicking();
+  stopTicking();
 
   if (prefersReducedMotion()) {
     list.style.transform = "translateY(-" + landY + "px)";
     stopTicking();
+    playTick();
     wireButtons(overlay, winnerName);
     return;
   }
@@ -296,12 +297,18 @@ function runSpin(names) {
   const duration = BASE_DURATION + Math.floor(Math.random() * EXTRA_RANDOM);
   const startTime = performance.now();
   let rafId = null;
+  let prevRow = -1;
 
   function step(now) {
     const elapsed = now - startTime;
     const t = Math.min(1, elapsed / duration);
     const eased = easeOutCubic(t);
     const currentY = eased * landY;
+    const currentRow = Math.floor(currentY / ITEM_HEIGHT);
+    if (currentRow !== prevRow) {
+      prevRow = currentRow;
+      playTick();
+    }
     list.style.transform = "translateY(-" + currentY + "px)";
 
     if (t < 1) {

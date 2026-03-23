@@ -1,6 +1,6 @@
 /* take_a_pick - sounds.js (ES module)
  * Web Audio manager for spin button click and subtle reel ticking.
- * Exports: playSpinClick, startTicking, stopTicking, setEnabled, resumeContext
+ * Exports: startTicking, stopTicking, setEnabled, resumeContext
  * Auto-wires on import (DOMContentLoaded).
  */
 
@@ -120,7 +120,6 @@ function wireSpinButton() {
   if (!btn) return;
   btn.addEventListener("click", () => {
     sounds.resumeContextFromGesture();
-    sounds.playSpinClick();
   });
 }
 
@@ -158,8 +157,8 @@ if (document.readyState === "loading") {
   init();
 }
 
-export function playSpinClick() {
-  sounds.playSpinClick();
+export function playTick() {
+  sounds.playTick();
 }
 
 export function startTicking() {
