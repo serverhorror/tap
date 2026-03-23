@@ -137,7 +137,7 @@ function updateControls() {
   if (clearBtn) clearBtn.disabled = count === 0;
 
   if (warningEl) {
-    if (count > WARN_THRESHOLD) {
+    if (count >= WARN_THRESHOLD) {
       warningEl.hidden = false;
       warningEl.classList.add("warning-visible");
       warningEl.textContent = `Large list (${count}). For best UX try fewer than ${WARN_THRESHOLD} names.`;
