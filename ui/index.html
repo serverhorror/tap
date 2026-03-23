@@ -115,6 +115,19 @@
 
         <main class="app panel" role="application" aria-labelledby="app-title">
             <section class="layout" id="main-grid">
+                <div class="card winner" role="region" aria-label="Winner">
+                    <div><strong>Winner</strong></div>
+                    <div
+                        id="winnerDisplay"
+                        style="
+                            margin-top: 8px;
+                            color: var(--accent);
+                            font-weight: 700;
+                        "
+                    >
+                        —
+                    </div>
+                </div>
                 <!-- Left: chips input area -->
                 <section class="chip-panel" aria-labelledby="names-heading">
                     <h2 id="names-heading" class="sr-only">Names</h2>
@@ -221,25 +234,6 @@
                         style="display: none; margin-top: 8px"
                         aria-live="polite"
                     ></p>
-
-                    <div
-                        class="card winner"
-                        role="region"
-                        aria-label="Winner"
-                        style="margin-top: 12px"
-                    >
-                        <div><strong>Winner</strong></div>
-                        <div
-                            id="winnerDisplay"
-                            style="
-                                margin-top: 8px;
-                                color: var(--accent);
-                                font-weight: 700;
-                            "
-                        >
-                            —
-                        </div>
-                    </div>
                 </aside>
             </section>
 
